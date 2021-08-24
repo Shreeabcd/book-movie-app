@@ -10,7 +10,7 @@ export class Controller extends Component {
   constructor()
   {
     super();
-    this.baseUrl = process.env.PUBLIC_URL;
+    this.baseUrl = "/api/v1"; //process.env.PUBLIC_URL;
   }
   render(){
     return(
