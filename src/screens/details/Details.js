@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Header from '../../common/header/Header';
+import moviesData from '../../assets/movieData';
 import Typography from '@material-ui/core/Typography';
 import './Details.css';
 import YouTube from 'react-youtube';
@@ -9,17 +10,11 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { Link } from 'react-router-dom';
 
-
 class Details extends Component {
-
     constructor() {
         super();
         this.state = {
-            movie: {
-                genres: [],
-                trailer_url: "",
-                artists: []
-            },
+            movie: {},
             starIcons: [{
                 id: 1,
                 stateId: "star1",
@@ -49,21 +44,11 @@ class Details extends Component {
     }
 
     componentWillMount() {
-        let that = this;
-        let dataMovie = null;
-        let xhrMovie = new XMLHttpRequest();
-        xhrMovie.addEventListener("readystatechange", function () {
-            if (this.readyState === 4) {
-                that.setState({ movie: JSON.parse(this.responseText) });
-            }
-        })
-
-        xhrMovie.open("GET", this.props.baseUrl + "movies/" + this.props.match.params.id);
-        xhrMovie.setRequestHeader("Cache-Control", "no-cache");
-        xhrMovie.send(dataMovie);
-
+        let currentState = this.state;
+        currentState.movie = moviesData.filter((mov) => {
+            return mov.id === this.props.match.params.id
+        })[0];
     }
-
 
     artistClickHandler = (url) => {
         window.location = url;
@@ -110,49 +95,71 @@ class Details extends Component {
                         <div>
                             <Typography variant="headline" component="h2">{movie.title} </Typography>
                         </div>
+                        <br />
                         <div>
-                            <Typography><span className="bold">Genre: </span> {movie.genres.join(', ')} </Typography>
-                        </div>
-                        <div>
+                            <Typography>
+                                <span className="bold">Genres: </span> {movie.genres.join(', ')}
+                            </Typography>
+                            <div>
                             <Typography><span className="bold">Duration:</span> {movie.duration} </Typography>
-                        </div>
-                        <div>
+                            </div>
+                            <div>
                             <Typography><span className="bold">Release Date:</span> {new Date(movie.release_date).toDateString()} </Typography>
-                        </div>
-                        <div>
+                            </div>
+                            <div>
                             <Typography><span className="bold"> Rating:</span> {movie.critics_rating}  </Typography>
-                        </div>
-                        <div className="marginTop16">
+                            </div>
+                            <div className="marginTop16">
                             <Typography><span className="bold">Plot:</span> <a href={movie.wiki_url}>(Wiki Link)</a> {movie.storyline} </Typography>
-                        </div>
-                        <div className="trailerContainer">
-                            <Typography><span className="bold">Trailer:</span></Typography>
-                            <YouTube
-                                videoId={movie.trailer_url.split("?v=")[1]}
-                                opts={opts}
-                                onReady={this._onReady}
-                            />
+                            </div>
+                            <div className="trailerContainer">
+                                <Typography>
+                                    <span className="bold">Trailer:</span>
+                                </Typography>
+                                <YouTube
+                                    videoId={movie.trailer_url.split("?v=")[1]}
+                                    opts={opts}
+                                    onReady={this._onReady}
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="rightDetails">
-                        <Typography> <span className="bold">Rate this movie: </span></Typography>
+                        <Typography>
+                            <span className="bold">Rate this movie: </span>
+                        </Typography>
                         {this.state.starIcons.map(star => (
-                            <StarBorderIcon className={star.color} key={"star" + star.id} onClick={() => this.starClickHandler(star.id)} />
+                            <StarBorderIcon
+                                className={star.color}
+                                key={"star" + star.id}
+                                onClick={() => this.starClickHandler(star.id)}
+                            />
                         ))}
-                        <div className="bold marginBottom16 marginTop16"><Typography><span className="bold">Artists:</span></Typography></div>
-                        <GridList cellHeight={160} cols={2}>
-                            {movie.artists.map(artist => (
-                                <GridListTile className="gridTile" onClick={() => this.artistClickHandler(artist.wiki_url)} key={artist.id}>
-                                    <img src={artist.profile_url} alt={artist.first_name + " " + artist.last_name} />
-                                    <GridListTileBar
-                                        title={artist.first_name + " " + artist.last_name}
-                                    />
-                                </GridListTile>
-                            ))}
-                        </GridList>
+
+                        <div className="bold marginBottom16 marginTop16">
+                            <Typography>
+                                <span className="bold">Artists:</span>
+                            </Typography>
+                        </div>
+                        <div className="paddingRight">
+                            <GridList cellHeight={160} cols={2}>
+                                {movie.artists != null && movie.artists.map(artist => (
+                                    <GridListTile
+                                        className="gridTile"
+                                        onClick={() => this.artistClickHandler(artist.wiki_url)}
+                                        key={artist.id}>
+                                        <img src={artist.profile_url} alt={artist.first_name + " " + artist.last_name} />
+                                        <GridListTileBar
+                                            title={artist.first_name + " " + artist.last_name}
+                                        />
+                                    </GridListTile>
+                                ))}
+                            </GridList>
+                        </div>
                     </div>
                 </div>
-            </div >);
+            </div>
+        )
     }
 }
 
