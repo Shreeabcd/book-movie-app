@@ -1,142 +1,143 @@
-import React, { Component } from 'react';
-import Header from '../../common/header/Header';
-import moviesData from '../../assets/movieData';
-import Typography from '@material-ui/core/Typography';
+import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import './Details.css';
-import YouTube from 'react-youtube';
+import Header from '../../common/header/Header';
+import MoviesData from '../../common/movieData';
+import Typography from '@material-ui/core/Typography';
+import Home from '../../screens/home/Home';
+import Youtube from 'react-youtube';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import { Link } from 'react-router-dom';
 
-class Details extends Component {
-    constructor() {
+
+class Details extends Component{
+    constructor(){
         super();
         this.state = {
-            movie: {},
-            starIcons: [{
-                id: 1,
-                stateId: "star1",
-                color: "black"
-            },
-            {
-                id: 2,
-                stateId: "star2",
-                color: "black"
-            },
-            {
-                id: 3,
-                stateId: "star3",
-                color: "black"
-            },
-            {
-                id: 4,
-                stateId: "star4",
-                color: "black"
-            },
-            {
-                id: 5,
-                stateId: "star5",
-                color: "black"
-            }]
+            movie : {},
+            starIcons: [
+                {
+                   id: 1,
+                   stateId: "star1",
+                   color: "black"
+                },
+                {
+                   id: 2,
+                   stateId: "star2",
+                   color: "black"
+                },
+                {
+                   id: 3,
+                   stateId: "star3",
+                   color: "black"
+                },
+                {
+                   id: 4,
+                   stateId: "star4",
+                   color: "black"
+                },
+                {
+                   id: 5,
+                   stateId: "star5",
+                   color: "black"
+                }
+             ]
+            
         }
     }
 
-    componentWillMount() {
+    componentWillMount(){
         let currentState = this.state;
-        currentState.movie = moviesData.filter((mov) => {
-            return mov.id === this.props.match.params.id
+        currentState.movie = MoviesData.filter((mov) =>{
+            return mov.id === this.props.movieId
         })[0];
+        this.setState({currentState});
+        console.log(this.state);
+    }
+
+    backToHomeHandler = () =>{
+        ReactDOM.render(<Home/>,document.getElementById('root'))
     }
 
     artistClickHandler = (url) => {
         window.location = url;
     }
 
-    starClickHandler = (id) => {
-        let starIconList = [];
-        for (let star of this.state.starIcons) {
-            let starNode = star;
-            if (star.id <= id) {
-                starNode.color = "yellow"
-            }
-            else {
-                starNode.color = "black";
+    starClickHandler = (starId) =>{
+          let starIconList = [];
+          for(let star of this.state.starIcons){
+              let starNode = star;
+              if(starNode.id <= starId){
+                  starNode.color = "yellow";
+              }
+              else {
+                  starNode.color = "black";
+              }
+              starIconList.push(starNode);
 
-            }
-            starIconList.push(starNode);
-        }
-        this.setState({ starIcons: starIconList });
+          }
+          this.setState({starIcons : starIconList});
     }
-
-    render() {
+    render(){
         let movie = this.state.movie;
         const opts = {
-            height: '300',
-            width: '700',
-            playerVars: {
-                autoplay: 1
+            height : '300',
+            width : '700',
+            playerVars :{
+                autoplay : 1
             }
         }
-        return (
-            <div className="details">
-                <Header id={this.props.match.params.id} baseUrl={this.props.baseUrl} showBookShowButton="true" />
-                <div className="back">
-                    <Typography>
-                        <Link to="/">  &#60; Back to Home</Link>
-                    </Typography>
+        
+        return(<div className="details">
+            <Header showBookShowButton="true"/>
+            <div className="back">
+                <Typography onClick={this.backToHomeHandler}>
+                    &#60; Back To Home
+                 </Typography>    
+             </div>   
+            <div className="flex-containerDetails">
+                <div className="leftDetails">
+                    <img src={movie.poster_url} alt={movie.title}/>
                 </div>
-                <div className="flex-containerDetails">
-                    <div className="leftDetails">
-                        <img src={movie.poster_url} alt={movie.title} />
-                    </div>
-                    <div className="middleDetails">
-                        <div>
-                            <Typography variant="headline" component="h2">{movie.title} </Typography>
-                        </div>
-                        <br />
-                        <div>
-                            <Typography>
-                                <span className="bold">Genres: </span> {movie.genres.join(', ')}
-                            </Typography>
-                            <div>
-                            <Typography><span className="bold">Duration:</span> {movie.duration} </Typography>
-                            </div>
-                            <div>
-                            <Typography><span className="bold">Release Date:</span> {new Date(movie.release_date).toDateString()} </Typography>
-                            </div>
-                            <div>
-                            <Typography><span className="bold"> Rating:</span> {movie.critics_rating}  </Typography>
-                            </div>
-                            <div className="marginTop16">
-                            <Typography><span className="bold">Plot:</span> <a href={movie.wiki_url}>(Wiki Link)</a> {movie.storyline} </Typography>
-                            </div>
-                            <div className="trailerContainer">
-                                <Typography>
-                                    <span className="bold">Trailer:</span>
-                                </Typography>
-                                <YouTube
-                                    videoId={movie.trailer_url.split("?v=")[1]}
-                                    opts={opts}
-                                    onReady={this._onReady}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="rightDetails">
-                        <Typography>
-                            <span className="bold">Rate this movie: </span>
-                        </Typography>
-                        {this.state.starIcons.map(star => (
-                            <StarBorderIcon
-                                className={star.color}
-                                key={"star" + star.id}
-                                onClick={() => this.starClickHandler(star.id)}
-                            />
-                        ))}
-
-                        <div className="bold marginBottom16 marginTop16">
+                <div className="middleDetails">
+                <div>
+                    <Typography variant="headline" component="h2">{movie.title}</Typography>
+                </div>
+                <div>
+                 <Typography><span className="bold">Genres: </span>{movie.genres.join(',')}</Typography>
+                </div>
+                <div>
+                 <Typography><span className="bold">Duration: </span>{movie.duration}</Typography>
+                </div>
+                <div>
+                 <Typography><span className="bold">Release Date: </span>{new Date(movie.release_date).toDateString()}</Typography>
+                </div>
+                <div>
+                 <Typography><span className="bold">Rating: </span>{movie.critics_rating}</Typography>
+                </div>
+                <div>
+                 <Typography><span className="bold">Plot: </span>(<a href="{movie.wiki_url}">Wiki Link</a>){movie.storyline}</Typography>
+                </div>
+                <div classname="trailerContainer">
+                   <Typography> <span className="bold">Trailer:</span></Typography>
+                   <Youtube 
+                       videoId={movie.trailer_url.split("?v=")[1]}
+                       opts={opts}
+                       onReady={this._onReady}
+                       /> 
+                      
+                </div>    
+    
+                </div>
+                <div className="rightDetails">
+                    <Typography> <span className="bold">Rate this movie:</span></Typography>
+                    {this.state.starIcons.map(star => (
+                        <StarBorderIcon className={star.color} key={"star" +star.id} 
+                        onClick={() => this.starClickHandler(star.id)}/>
+                    ))}
+                <div className="bold marginBottom16 marginTop16">
                             <Typography>
                                 <span className="bold">Artists:</span>
                             </Typography>
@@ -156,10 +157,10 @@ class Details extends Component {
                                 ))}
                             </GridList>
                         </div>
-                    </div>
+                        
                 </div>
-            </div>
-        )
+            </div>   
+        </div>);
     }
 }
 

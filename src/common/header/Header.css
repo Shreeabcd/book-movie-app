@@ -1,42 +1,40 @@
-.app-header{
+.app-header {
     background-color: #222;
-    height:36px;
+    height: 36px;
     padding: 8px 32px 8px 16px;
 }
 
-.login-button, .bookshow-button
-{
-    float:right;
-}
-.bookshow-button
-{
-    margin-right:8px;
+.login-button {
+    float: right;
 }
 
-.app-logo{
+.bookshow-button {
+    float: right;
+    margin-right: 5px;
+}
+
+.app-logo {
     animation: app-logo-spin infinite 8s linear;
-    height:35px;
+    height: 35px;
     background: #ff7f7f;
-}
+ }
+ 
+ @keyframes app-logo-spin {
+    from { transform: scaleX(-1); }
+ }
 
-@keyframes app-logo-spin{
-    from { transform: scaleX(-1);}
-}
+ .tabs{
+     margin-bottom: 20px;
+ }
 
-.tabs{
-    margin-bottom: 20px;
-}
+ .dispNone{
+     display: none;
+ }
 
-.dispNone{
-    display:none;
-}
-
-.dispBlock {
+ .dispBlock{
     display: block;
 }
 
-.red
-{
-    color: red;
+.red{
+    color:red;
 }
-
